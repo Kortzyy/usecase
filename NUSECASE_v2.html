@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RepLiT — Use Case Diagram v6.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #f2efe9;
+    --surface: #ffffff;
+    --surface2: #eae7e0;
+    --border: #d6d2c8;
+    --ink: #16130d;
+    --ink2: #3a3730;
+    --ink3: #857f74;
+    --r:  #b52e0e;
+    --b:  #1240a0;
+    --g:  #0a6832;
+    --o:  #7a4200;
+    --l:  #562080;
+    --pk: #9a1858;
+    --cy: #096868;
+    --lm: #446200;
+    --or: #c44a00;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .header { background: var(--ink); padding: 22px 48px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -1px; font-family: 'Syne', sans-serif; }
+  .logo em { color: #e8451a; font-style: normal; }
+  .chip { display: inline-block; background: #e8451a; color: white; font-family: 'IBM Plex Mono', monospace; font-size: 0.57rem; padding: 3px 9px; border-radius: 2px; letter-spacing: 1.5px; margin-left: 10px; vertical-align: middle; }
+  .chip-b { background: #1240a0; }
+  .chip-g { background: #0a6832; }
+  .chip-c { background: #096868; }
+  .header-right { text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: #7a7670; line-height: 1.9; }
+  .header-right strong { color: #ccc8c2; }
+
+  /* ── TITLE BLOCK ── */
+  .title-block { background: var(--surface); border-bottom: 3px solid var(--ink); padding: 24px 48px; }
+  .title-block h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; font-family: 'Syne', sans-serif; }
+  .title-block p { font-size: 0.79rem; color: var(--ink3); font-family: 'IBM Plex Mono', monospace; }
+
+  .content { padding: 30px 48px; }
+
+  .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--r); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+  .section-label::after { content: ''; flex: 1; height: 1.5px; background: var(--border); }
+
+  /* ── V6 NOTE ── */
+  .v6-note { background: #e8f5ee; border: 1px solid #0a6832; border-radius: 6px; padding: 12px 16px; margin-bottom: 24px; font-size: 0.75rem; color: #064a22; font-family: 'IBM Plex Mono', monospace; line-height: 1.65; }
+  .v6-note strong { color: #0a6832; }
+
+  /* ── LEGEND ── */
+  .legend-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; margin-bottom: 34px; }
+  .legend-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 6px; padding: 13px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .legend-card h4 { font-size: 0.78rem; font-weight: 700; font-family: 'Syne', sans-serif; }
+  .legend-card p { font-size: 0.69rem; color: var(--ink3); line-height: 1.5; }
+
+  /* ── DIAGRAM ── */
+  .diagram-wrap { background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; padding: 22px; margin-bottom: 34px; overflow-x: auto; }
+  .diagram-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; font-family: 'Syne', sans-serif; }
+  .diagram-title::before { content: ''; width: 9px; height: 9px; background: var(--r); border-radius: 50%; display: block; }
+
+  /* ── RELATIONSHIP TABLE ── */
+  .rel-table { width: 100%; border-collapse: collapse; font-size: 0.77rem; margin-bottom: 34px; }
+  .rel-table thead tr { background: var(--ink); }
+  .rel-table th { padding: 10px 14px; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: #ccc8c2; letter-spacing: 1px; text-transform: uppercase; }
+  .rel-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--ink2); line-height: 1.45; vertical-align: top; }
+  .rel-table tr:hover td { background: var(--surface2); }
+  .uc-id { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--b); font-weight: 600; white-space: nowrap; }
+  .rb { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; padding: 2px 7px; border-radius: 2px; font-weight: 600; border: 1px solid; white-space: nowrap; }
+  .rb-inc { background: #e6edfb; color: #1240a0; border-color: #1240a0; }
+  .rb-ext { background: #fdf0e0; color: #7a4200; border-color: #7a4200; }
+  .rb-ass { background: #e8f5ee; color: #0a6832; border-color: #0a6832; }
+  .rb-gen { background: #f2eaf8; color: #562080; border-color: #562080; }
+
+  /* ── EXPLANATION CARDS ── */
+  .expl-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 30px; }
+  .expl-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 6px; padding: 17px; }
+  .expl-card h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-family: 'Syne', sans-serif; }
+  .expl-card p, .expl-card li { font-size: 0.74rem; color: var(--ink2); line-height: 1.65; }
+  .expl-card ul { padding-left: 14px; }
+  .expl-card li { margin-bottom: 3px; }
+  .nbadge { width: 21px; height: 21px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; font-weight: 600; color: white; flex-shrink: 0; }
+
+  .footer { background: var(--ink); padding: 16px 48px; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem; color: #5a5650; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">Rep<em>L</em>i<em>T</em>
+      <span class="chip">USE CASE DIAGRAM</span>
+      <span class="chip chip-b">v6.0</span>
+      <span class="chip chip-g">8 ACTORS</span>
+      <span class="chip chip-c">43 USE CASES</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <strong>Group M2STZ</strong> · National Teachers College<br>
+    BSIT 3.2 · Capstone Project 1 · Version 6.0 · May 03, 2026<br>
+    Adviser: Mr. Carlito L. Cunanan, MIT
+  </div>
+</div>
+
+<div class="title-block">
+  <h1>Use Case Diagram — RepLiT System v6.0</h1>
+  <p>Report Location and Incident In Time · 5-Tier Architecture · Triangulation Pipeline · Equipment · Affiliate Org · Audit Log · Fire Codes · Pasay City</p>
+</div>
+
+<div class="content">
+
+  <div class="v6-note">
+    <strong>v6.0 NEW / UPDATED USE CASES:</strong>
+    UC-A4b revised → UC-A4b: Auto-Capture Compass Bearing (now feeds Triangulation, not Claude directly) ·
+    UC-T (NEW SECTION): Triangulation Pipeline — UC-T1 Form Incident Cluster · UC-T2 Compute Ray Intersection · UC-T3 Compute Centroid (3+ reports) · UC-T4 Generate Confidence Badge ·
+    UC-H3 updated: Claude receives fire_estimated_lat/lng (post-triangulation), never raw bearings ·
+    UC-D1/D2 expanded with CHG#4: FV affiliates can apply hydrant ground-truth overrides ·
+    UC-F2a updated: Affiliate request approval now required before hydrant update authority is granted ·
+    AI model: Claude Haiku (CHG#2); Sonnet only as pilot fallback
+  </div>
+
+  <!-- ── LEGEND ── -->
+  <div class="section-label">Use Case Diagram — Symbols &amp; UML Notation</div>
+  <div class="legend-grid">
+    <div class="legend-card">
+      <svg width="60" height="72"><ellipse cx="30" cy="14" rx="10" ry="10" fill="none" stroke="#16130d" stroke-width="2"/><line x1="30" y1="24" x2="30" y2="50" stroke="#16130d" stroke-width="2"/><line x1="10" y1="36" x2="50" y2="36" stroke="#16130d" stroke-width="2"/><line x1="30" y1="50" x2="14" y2="66" stroke="#16130d" stroke-width="2"/><line x1="30" y1="50" x2="46" y2="66" stroke="#16130d" stroke-width="2"/></svg>
+      <h4>Actor</h4><p>Stick figure. Person or system outside RepLiT that initiates or receives a use case.</p>
+    </div>
+    <div class="legend-card">
+      <svg width="90" height="44"><ellipse cx="45" cy="22" rx="42" ry="18" fill="none" stroke="#1240a0" stroke-width="2"/><text x="45" y="26" text-anchor="middle" font-family="IBM Plex Sans" font-size="9" fill="#1240a0" font-weight="600">Use Case</text></svg>
+      <h4>Use Case</h4><p>Oval. A function or feature of RepLiT that delivers value to at least one actor.</p>
+    </div>
+    <div class="legend-card">
+      <svg width="90" height="44"><rect x="2" y="3" width="86" height="38" rx="0" fill="none" stroke="#16130d" stroke-width="2" stroke-dasharray="7,3"/><text x="45" y="26" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#16130d">System Boundary</text></svg>
+      <h4>System Boundary</h4><p>Dashed rectangle enclosing all use cases that belong to the RepLiT system.</p>
+    </div>
+    <div class="legend-card">
+      <svg width="100" height="54"><defs><marker id="am-l" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#16130d"/></marker><marker id="ai-l" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#1240a0"/></marker><marker id="ae-l" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#7a4200"/></marker></defs>
+      <line x1="5" y1="14" x2="88" y2="14" stroke="#16130d" stroke-width="1.8" marker-end="url(#am-l)"/><text x="46" y="10" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#3a3730">association</text>
+      <line x1="5" y1="32" x2="88" y2="32" stroke="#1240a0" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ai-l)"/><text x="46" y="28" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#1240a0">«include»</text>
+      <line x1="5" y1="50" x2="88" y2="50" stroke="#7a4200" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ae-l)"/><text x="46" y="46" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#7a4200">«extend»</text>
+      </svg>
+      <h4>Relationships</h4><p>Solid = association. Dashed «include» = always triggered. Dashed «extend» = conditional/optional.</p>
+    </div>
+    <div class="legend-card">
+      <svg width="90" height="50"><defs><marker id="ag-l" markerWidth="12" markerHeight="10" refX="1" refY="5" orient="auto"><polygon points="11 0,1 5,11 10" fill="none" stroke="#562080" stroke-width="1.5"/></marker></defs><line x1="80" y1="25" x2="12" y2="25" stroke="#562080" stroke-width="1.8" marker-end="url(#ag-l)"/><text x="45" y="18" text-anchor="middle" font-family="IBM Plex Mono" font-size="7.5" fill="#562080">generalization</text><text x="45" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#857f74">(inheritance ↑ parent)</text></svg>
+      <h4>Generalization</h4><p>Hollow arrowhead pointing to parent. Child actor/use case inherits all parent capabilities.</p>
+    </div>
+  </div>
+
+  <!-- ── DIAGRAM ── -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">RepLiT v6.0 — Complete Use Case Diagram (UML · 9 Sections · 8 Actors · 43 Use Cases)</div>
+    <div style="overflow-x:auto;">
+
+<svg width="1420" height="2780" viewBox="0 0 1420 2780" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" style="min-width:1420px;">
+  <defs>
+    <marker id="asc"  markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2a2018"/></marker>
+    <marker id="inc"  markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#1240a0"/></marker>
+    <marker id="ext"  markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#7a4200"/></marker>
+    <marker id="gen"  markerWidth="12" markerHeight="10" refX="1" refY="5" orient="auto"><polygon points="11 0,1 5,11 10" fill="none" stroke="#562080" stroke-width="1.5"/></marker>
+    <pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e8e4da" stroke-width="0.5"/></pattern>
+  </defs>
+
+  <rect width="1420" height="2780" fill="#f8f6f2"/>
+  <rect width="1420" height="2780" fill="url(#grid2)" opacity="0.5"/>
+
+  <!-- ══ SYSTEM BOUNDARY ══ -->
+  <rect x="248" y="48" width="924" height="2702" rx="4" fill="none" stroke="#16130d" stroke-width="2" stroke-dasharray="12,5"/>
+  <text x="710" y="76" text-anchor="middle" font-family="Syne" font-size="14" fill="#16130d" font-weight="800" letter-spacing="1">RepLiT SYSTEM BOUNDARY — v6.0</text>
+  <text x="710" y="94" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="#857f74">Report Location and Incident In Time · 5-Tier Architecture · Triangulation · Pasay City</text>
+
+  <!-- ══════════════════════════════════
+       ACTORS — LEFT SIDE
+  ══════════════════════════════════ -->
+
+  <!-- A1: General User -->
+  <ellipse cx="84" cy="238" rx="16" ry="16" fill="none" stroke="#b52e0e" stroke-width="2.2"/>
+  <line x1="84" y1="254" x2="84" y2="294" stroke="#b52e0e" stroke-width="2.2"/>
+  <line x1="58" y1="270" x2="110" y2="270" stroke="#b52e0e" stroke-width="2.2"/>
+  <line x1="84" y1="294" x2="62" y2="318" stroke="#b52e0e" stroke-width="2.2"/>
+  <line x1="84" y1="294" x2="106" y2="318" stroke="#b52e0e" stroke-width="2.2"/>
+  <text x="84" y="336" text-anchor="middle" font-size="11" fill="#b52e0e" font-weight="700" font-family="Syne">General User</text>
+  <text x="84" y="350" text-anchor="middle" font-size="9" fill="#857f74">(Citizen · Mobile)</text>
+
+  <!-- A5: FV Sub-Admin -->
+  <ellipse cx="84" cy="768" rx="16" ry="16" fill="none" stroke="#446200" stroke-width="2.2"/>
+  <line x1="84" y1="784" x2="84" y2="824" stroke="#446200" stroke-width="2.2"/>
+  <line x1="58" y1="800" x2="110" y2="800" stroke="#446200" stroke-width="2.2"/>
+  <line x1="84" y1="824" x2="62" y2="848" stroke="#446200" stroke-width="2.2"/>
+  <line x1="84" y1="824" x2="106" y2="848" stroke="#446200" stroke-width="2.2"/>
+  <text x="84" y="866" text-anchor="middle" font-size="11" fill="#446200" font-weight="700" font-family="Syne">Sub-Admin</text>
+  <text x="84" y="880" text-anchor="middle" font-size="11" fill="#446200" font-weight="700" font-family="Syne">Fire Volunteer</text>
+  <text x="84" y="894" text-anchor="middle" font-size="9" fill="#857f74">REQUEST Alarm</text>
+  <text x="84" y="907" text-anchor="middle" font-size="9" fill="#857f74">Hydrant Update (CHG#4)</text>
+
+  <!-- A3: BFP Sub-Admin -->
+  <ellipse cx="84" cy="1334" rx="16" ry="16" fill="none" stroke="#7a4200" stroke-width="2.2"/>
+  <line x1="84" y1="1350" x2="84" y2="1390" stroke="#7a4200" stroke-width="2.2"/>
+  <line x1="58" y1="1366" x2="110" y2="1366" stroke="#7a4200" stroke-width="2.2"/>
+  <line x1="84" y1="1390" x2="62" y2="1414" stroke="#7a4200" stroke-width="2.2"/>
+  <line x1="84" y1="1390" x2="106" y2="1414" stroke="#7a4200" stroke-width="2.2"/>
+  <text x="84" y="1432" text-anchor="middle" font-size="11" fill="#7a4200" font-weight="700" font-family="Syne">Sub-Admin BFP</text>
+  <text x="84" y="1446" text-anchor="middle" font-size="9" fill="#7a4200">RAISE Alarm (Mobile)</text>
+
+  <!-- A4: Sub-Admins Brgy/Medic/Police -->
+  <ellipse cx="84" cy="1830" rx="16" ry="16" fill="none" stroke="#562080" stroke-width="2.2"/>
+  <line x1="84" y1="1846" x2="84" y2="1886" stroke="#562080" stroke-width="2.2"/>
+  <line x1="58" y1="1862" x2="110" y2="1862" stroke="#562080" stroke-width="2.2"/>
+  <line x1="84" y1="1886" x2="62" y2="1910" stroke="#562080" stroke-width="2.2"/>
+  <line x1="84" y1="1886" x2="106" y2="1910" stroke="#562080" stroke-width="2.2"/>
+  <text x="84" y="1928" text-anchor="middle" font-size="11" fill="#562080" font-weight="700" font-family="Syne">Sub-Admin</text>
+  <text x="84" y="1942" text-anchor="middle" font-size="9" fill="#857f74">Brgy · Medic · Police</text>
+
+  <!-- ══════════════════════════════════
+       ACTORS — RIGHT SIDE
+  ══════════════════════════════════ -->
+
+  <!-- A2: Admin Barangay 76 -->
+  <ellipse cx="1336" cy="718" rx="16" ry="16" fill="none" stroke="#1240a0" stroke-width="2.2"/>
+  <line x1="1336" y1="734" x2="1336" y2="774" stroke="#1240a0" stroke-width="2.2"/>
+  <line x1="1310" y1="750" x2="1362" y2="750" stroke="#1240a0" stroke-width="2.2"/>
+  <line x1="1336" y1="774" x2="1314" y2="798" stroke="#1240a0" stroke-width="2.2"/>
+  <line x1="1336" y1="774" x2="1358" y2="798" stroke="#1240a0" stroke-width="2.2"/>
+  <text x="1336" y="816" text-anchor="middle" font-size="11" fill="#1240a0" font-weight="700" font-family="Syne">Admin</text>
+  <text x="1336" y="830" text-anchor="middle" font-size="11" fill="#1240a0" font-weight="700" font-family="Syne">Barangay 76</text>
+  <text x="1336" y="844" text-anchor="middle" font-size="9" fill="#857f74">Dispatcher · Web</text>
+
+  <!-- A6: Response Teams -->
+  <ellipse cx="1336" cy="1108" rx="16" ry="16" fill="none" stroke="#0a6832" stroke-width="2.2"/>
+  <line x1="1336" y1="1124" x2="1336" y2="1164" stroke="#0a6832" stroke-width="2.2"/>
+  <line x1="1310" y1="1140" x2="1362" y2="1140" stroke="#0a6832" stroke-width="2.2"/>
+  <line x1="1336" y1="1164" x2="1314" y2="1188" stroke="#0a6832" stroke-width="2.2"/>
+  <line x1="1336" y1="1164" x2="1358" y2="1188" stroke="#0a6832" stroke-width="2.2"/>
+  <text x="1336" y="1206" text-anchor="middle" font-size="11" fill="#0a6832" font-weight="700" font-family="Syne">Response Teams</text>
+  <text x="1336" y="1220" text-anchor="middle" font-size="9" fill="#857f74">FV·BFP·Brgy·Medic·Police</text>
+
+  <!-- A7: Super Admin -->
+  <ellipse cx="1336" cy="1988" rx="16" ry="16" fill="none" stroke="#9a1858" stroke-width="2.2"/>
+  <line x1="1336" y1="2004" x2="1336" y2="2044" stroke="#9a1858" stroke-width="2.2"/>
+  <line x1="1310" y1="2020" x2="1362" y2="2020" stroke="#9a1858" stroke-width="2.2"/>
+  <line x1="1336" y1="2044" x2="1314" y2="2068" stroke="#9a1858" stroke-width="2.2"/>
+  <line x1="1336" y1="2044" x2="1358" y2="2068" stroke="#9a1858" stroke-width="2.2"/>
+  <text x="1336" y="2086" text-anchor="middle" font-size="11" fill="#9a1858" font-weight="700" font-family="Syne">Super Admin</text>
+  <text x="1336" y="2100" text-anchor="middle" font-size="9" fill="#857f74">M2STZ · Full Control · Web</text>
+
+  <!-- A8: Claude API -->
+  <ellipse cx="1336" cy="2500" rx="16" ry="16" fill="none" stroke="#096868" stroke-width="2.2"/>
+  <line x1="1336" y1="2516" x2="1336" y2="2556" stroke="#096868" stroke-width="2.2"/>
+  <line x1="1310" y1="2532" x2="1362" y2="2532" stroke="#096868" stroke-width="2.2"/>
+  <line x1="1336" y1="2556" x2="1314" y2="2580" stroke="#096868" stroke-width="2.2"/>
+  <line x1="1336" y1="2556" x2="1358" y2="2580" stroke="#096868" stroke-width="2.2"/>
+  <text x="1336" y="2598" text-anchor="middle" font-size="11" fill="#096868" font-weight="700" font-family="Syne">Claude API</text>
+  <text x="1336" y="2612" text-anchor="middle" font-size="9" fill="#857f74">(Haiku · Sonnet fallback)</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION A — INCIDENT REPORTING (GENERAL USER)
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="116" width="892" height="28" rx="2" fill="#b52e0e" opacity="0.88"/>
+  <text x="710" y="135" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">A — INCIDENT REPORTING (GENERAL USER · MOBILE)</text>
+
+  <!-- UC-A1: Submit Fire Incident Report -->
+  <ellipse cx="490" cy="202" rx="120" ry="26" fill="#fff2ee" stroke="#b52e0e" stroke-width="2"/>
+  <text x="490" y="199" text-anchor="middle" font-size="10.5" fill="#b52e0e" font-weight="600">UC-A1: Submit Fire</text>
+  <text x="490" y="212" text-anchor="middle" font-size="10.5" fill="#b52e0e" font-weight="600">Incident Report</text>
+
+  <!-- UC-A2: Auto-Capture GPS -->
+  <ellipse cx="860" cy="178" rx="106" ry="24" fill="#fff2ee" stroke="#b52e0e" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="860" y="175" text-anchor="middle" font-size="10" fill="#b52e0e">UC-A2: Auto-Capture</text>
+  <text x="860" y="188" text-anchor="middle" font-size="10" fill="#b52e0e">GPS Location</text>
+
+  <!-- UC-A3: Upload Incident Photo (camera-only) -->
+  <ellipse cx="860" cy="240" rx="106" ry="24" fill="#fff2ee" stroke="#b52e0e" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="860" y="237" text-anchor="middle" font-size="10" fill="#b52e0e">UC-A3: Upload</text>
+  <text x="860" y="250" text-anchor="middle" font-size="10" fill="#b52e0e">Incident Photo (Camera)</text>
+
+  <!-- UC-A4: Trigger SOS Pre-Alert (CHG#1) -->
+  <ellipse cx="860" cy="306" rx="108" ry="24" fill="#fff2ee" stroke="#b52e0e" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="860" y="301" text-anchor="middle" font-size="9.5" fill="#b52e0e">UC-A4: Trigger SOS</text>
+  <text x="860" y="314" text-anchor="middle" font-size="9.5" fill="#b52e0e">Pre-Alert Pin (CHG#1)</text>
+
+  <!-- UC-A4b: Auto-Capture Compass Bearing (feeds triangulation, CHG#3) -->
+  <ellipse cx="860" cy="372" rx="112" ry="26" fill="#fff2ee" stroke="#b52e0e" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="860" y="366" text-anchor="middle" font-size="9.5" fill="#b52e0e">UC-A4b: Auto-Capture</text>
+  <text x="860" y="378" text-anchor="middle" font-size="9.5" fill="#b52e0e">Compass Bearing (CHG#3)</text>
+  <text x="860" y="390" text-anchor="middle" font-size="8" fill="#857f74">Invisible to citizen · Feeds Triangulation</text>
+
+  <!-- UC-A5: Track Responding Team Live Location -->
+  <ellipse cx="490" cy="330" rx="118" ry="26" fill="#fff2ee" stroke="#b52e0e" stroke-width="2"/>
+  <text x="490" y="327" text-anchor="middle" font-size="10.5" fill="#b52e0e" font-weight="600">UC-A5: Track Responding</text>
+  <text x="490" y="340" text-anchor="middle" font-size="10.5" fill="#b52e0e" font-weight="600">Team Live Location</text>
+
+  <!-- UC-A6: Receive Status Notifications -->
+  <ellipse cx="490" cy="410" rx="118" ry="26" fill="#fff2ee" stroke="#b52e0e" stroke-width="2"/>
+  <text x="490" y="407" text-anchor="middle" font-size="10.5" fill="#b52e0e" font-weight="600">UC-A6: Receive Status</text>
+  <text x="490" y="420" text-anchor="middle" font-size="10.5" fill="#b52e0e" font-weight="600">Notifications (FCM)</text>
+
+  <!-- Actor A1 associations -->
+  <line x1="100" y1="278" x2="372" y2="214" stroke="#b52e0e" stroke-width="1.6" marker-end="url(#asc)"/>
+  <line x1="100" y1="290" x2="372" y2="336" stroke="#b52e0e" stroke-width="1.6" marker-end="url(#asc)"/>
+  <line x1="100" y1="300" x2="372" y2="410" stroke="#b52e0e" stroke-width="1.6" marker-end="url(#asc)"/>
+
+  <!-- include: A1→A2, A1→A3 -->
+  <line x1="610" y1="198" x2="754" y2="182" stroke="#1240a0" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="674" y="182" text-anchor="middle" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+  <line x1="610" y1="208" x2="754" y2="240" stroke="#1240a0" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="676" y="234" text-anchor="middle" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+
+  <!-- include: A1→A4b (bearing always captured at photo) -->
+  <line x1="606" y1="214" x2="748" y2="364" stroke="#1240a0" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="660" y="308" text-anchor="middle" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+
+  <!-- extend: A1→A4 (SOS hold only) -->
+  <line x1="598" y1="218" x2="752" y2="302" stroke="#7a4200" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#ext)"/>
+  <text x="646" y="264" text-anchor="middle" font-size="8" fill="#7a4200" font-family="IBM Plex Mono">«extend»</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION T — TRIANGULATION PIPELINE (v6 NEW)
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="450" width="892" height="28" rx="2" fill="#c44a00" opacity="0.88"/>
+  <text x="710" y="469" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">T — TRIANGULATION PIPELINE (FastAPI Backend · v6 NEW · CHG#3)</text>
+
+  <!-- UC-T1: Form Incident Cluster -->
+  <ellipse cx="460" cy="532" rx="120" ry="26" fill="#fff4ee" stroke="#c44a00" stroke-width="2"/>
+  <text x="460" y="528" text-anchor="middle" font-size="10.5" fill="#c44a00" font-weight="600">UC-T1: Form Incident</text>
+  <text x="460" y="542" text-anchor="middle" font-size="10.5" fill="#c44a00" font-weight="600">Cluster (500m / 5-min)</text>
+
+  <!-- UC-T2: Compute Ray-Ray Intersection -->
+  <ellipse cx="730" cy="520" rx="126" ry="26" fill="#fff4ee" stroke="#c44a00" stroke-width="2"/>
+  <text x="730" y="516" text-anchor="middle" font-size="10.5" fill="#c44a00" font-weight="600">UC-T2: Compute Ray</text>
+  <text x="730" y="529" text-anchor="middle" font-size="10.5" fill="#c44a00" font-weight="600">Intersection (2 reports)</text>
+
+  <!-- UC-T3: Compute Centroid (3+ reports) -->
+  <ellipse cx="730" cy="588" rx="126" ry="26" fill="#fff4ee" stroke="#c44a00" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="730" y="584" text-anchor="middle" font-size="10" fill="#c44a00">UC-T3: Compute Centroid</text>
+  <text x="730" y="597" text-anchor="middle" font-size="10" fill="#c44a00">(3+ reports — filtered pairs)</text>
+
+  <!-- UC-T4: Generate Confidence Badge -->
+  <ellipse cx="460" cy="600" rx="120" ry="26" fill="#fff4ee" stroke="#c44a00" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="460" y="596" text-anchor="middle" font-size="10" fill="#c44a00">UC-T4: Generate</text>
+  <text x="460" y="609" text-anchor="middle" font-size="10" fill="#c44a00">Confidence Badge (H/M/L)</text>
+
+  <!-- Section T: System-triggered (no actor association — internal pipeline) -->
+  <text x="290" y="534" font-size="8.5" fill="#c44a00" font-family="IBM Plex Mono" font-weight="600">«system»</text>
+  <text x="290" y="547" font-size="8" fill="#857f74" font-family="IBM Plex Mono">Internal FastAPI</text>
+  <text x="290" y="558" font-size="8" fill="#857f74" font-family="IBM Plex Mono">process — triggered</text>
+  <text x="290" y="569" font-size="8" fill="#857f74" font-family="IBM Plex Mono">by P1 submission</text>
+
+  <!-- include: T1→T2 -->
+  <line x1="580" y1="530" x2="604" y2="522" stroke="#1240a0" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="590" y="518" text-anchor="middle" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+  <!-- extend: T1→T3 (only if 3+) -->
+  <line x1="580" y1="546" x2="604" y2="582" stroke="#7a4200" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#ext)"/>
+  <text x="590" y="572" text-anchor="middle" font-size="8" fill="#7a4200" font-family="IBM Plex Mono">«extend»</text>
+  <!-- include: T1→T4 -->
+  <line x1="460" y1="558" x2="460" y2="574" stroke="#1240a0" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="480" y="568" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION B — ADMIN OPERATIONS (BARANGAY 76)
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="646" width="892" height="28" rx="2" fill="#1240a0" opacity="0.88"/>
+  <text x="710" y="665" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">B — ADMIN OPERATIONS (BARANGAY 76 · WEB)</text>
+
+  <!-- UC-B1: View GIS Dashboard with triangulation badges -->
+  <ellipse cx="450" cy="726" rx="118" ry="26" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="450" y="722" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B1: View GIS Dashboard</text>
+  <text x="450" y="736" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">(Triangulation Badges)</text>
+
+  <!-- UC-B1a: Map layers -->
+  <ellipse cx="840" cy="714" rx="106" ry="24" fill="#dde8fc" stroke="#1240a0" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="840" y="709" text-anchor="middle" font-size="9.5" fill="#1240a0">UC-B1a: View Map Layers</text>
+  <text x="840" y="722" text-anchor="middle" font-size="8.5" fill="#857f74">Hydrants·Risk·Evac·Water·Cisterns</text>
+
+  <!-- UC-B2: View AI Summary -->
+  <ellipse cx="450" cy="796" rx="118" ry="26" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="450" y="792" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B2: View AI-Generated</text>
+  <text x="450" y="806" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">Incident Summary</text>
+
+  <!-- UC-B3: Verify -->
+  <ellipse cx="700" cy="780" rx="108" ry="24" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="700" y="777" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B3: Verify</text>
+  <text x="700" y="790" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">Incident Report</text>
+
+  <!-- UC-B4: Reject -->
+  <ellipse cx="700" cy="848" rx="108" ry="24" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="700" y="845" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B4: Reject</text>
+  <text x="700" y="858" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">Incident Report</text>
+
+  <!-- UC-B5: Dispatch Manual -->
+  <ellipse cx="450" cy="868" rx="116" ry="24" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="450" y="865" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B5: Dispatch Response</text>
+  <text x="450" y="878" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">Team (Manual)</text>
+
+  <!-- UC-B6: Resolve -->
+  <ellipse cx="700" cy="918" rx="108" ry="24" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="700" y="915" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B6: Resolve Incident</text>
+  <text x="700" y="928" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">(Fire-Out Declaration)</text>
+
+  <!-- UC-B6a: Generate BFP Fire-Out Report (AI) -->
+  <ellipse cx="860" cy="980" rx="108" ry="24" fill="#dde8fc" stroke="#1240a0" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="860" y="977" text-anchor="middle" font-size="9.5" fill="#1240a0">UC-B6a: Generate</text>
+  <text x="860" y="990" text-anchor="middle" font-size="9.5" fill="#1240a0">BFP Fire-Out Report (AI)</text>
+
+  <!-- UC-B7: Approve Map Updates -->
+  <ellipse cx="450" cy="940" rx="116" ry="24" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="450" y="937" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B7: Approve Map</text>
+  <text x="450" y="950" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">Layer Updates</text>
+
+  <!-- UC-B8: Monitor Responder Locations -->
+  <ellipse cx="700" cy="988" rx="112" ry="24" fill="#eef2fc" stroke="#1240a0" stroke-width="2"/>
+  <text x="700" y="985" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">UC-B8: Monitor Responder</text>
+  <text x="700" y="998" text-anchor="middle" font-size="10.5" fill="#1240a0" font-weight="600">Live Location</text>
+
+  <!-- Admin associations (from right actor) -->
+  <line x1="1320" y1="748" x2="892" y2="728" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="756" x2="892" y2="718" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="764" x2="892" y2="796" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="772" x2="892" y2="780" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="780" x2="892" y2="850" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="786" x2="892" y2="866" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="792" x2="892" y2="918" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="798" x2="892" y2="938" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="806" x2="892" y2="988" stroke="#1240a0" stroke-width="1.5" marker-end="url(#asc)"/>
+
+  <!-- include: B1→B1a; B6→B6a -->
+  <line x1="568" y1="726" x2="734" y2="716" stroke="#1240a0" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="646" y="712" text-anchor="middle" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+  <line x1="808" y1="918" x2="856" y2="956" stroke="#1240a0" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="846" y="940" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION C — RESPONSE TEAM OPERATIONS
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="1030" width="892" height="28" rx="2" fill="#0a6832" opacity="0.88"/>
+  <text x="710" y="1049" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">C — RESPONSE TEAM OPERATIONS (ALL AGENCIES · MOBILE)</text>
+
+  <!-- UC-C1: Receive Incident Notification -->
+  <ellipse cx="460" cy="1100" rx="118" ry="26" fill="#e6f8ee" stroke="#0a6832" stroke-width="2"/>
+  <text x="460" y="1097" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">UC-C1: Receive Incident</text>
+  <text x="460" y="1110" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">Notification (FCM)</text>
+
+  <!-- UC-C2: Self-Select Incident -->
+  <ellipse cx="740" cy="1100" rx="116" ry="26" fill="#e6f8ee" stroke="#0a6832" stroke-width="2"/>
+  <text x="740" y="1097" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">UC-C2: Self-Select Incident</text>
+  <text x="740" y="1110" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">to Respond</text>
+
+  <!-- UC-C3: View Route Suggestion -->
+  <ellipse cx="460" cy="1172" rx="118" ry="26" fill="#e6f8ee" stroke="#0a6832" stroke-width="2"/>
+  <text x="460" y="1169" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">UC-C3: View Route</text>
+  <text x="460" y="1182" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">Suggestion (MapBox)</text>
+
+  <!-- UC-C4: View Hydrant + Water + Evac Map -->
+  <ellipse cx="740" cy="1172" rx="118" ry="26" fill="#e6f8ee" stroke="#0a6832" stroke-width="2"/>
+  <text x="740" y="1168" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">UC-C4: View Hydrant,</text>
+  <text x="740" y="1181" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">Water &amp; Evacuation Map</text>
+
+  <!-- UC-C5: Tap Arrived -->
+  <ellipse cx="460" cy="1244" rx="116" ry="24" fill="#e6f8ee" stroke="#0a6832" stroke-width="2"/>
+  <text x="460" y="1241" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">UC-C5: Tap Arrived Button</text>
+  <text x="460" y="1254" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">(Triggers Ongoing Status)</text>
+
+  <!-- UC-C6: Tap Exit -->
+  <ellipse cx="740" cy="1244" rx="116" ry="24" fill="#e6f8ee" stroke="#0a6832" stroke-width="2"/>
+  <text x="740" y="1241" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">UC-C6: Tap Exit Button</text>
+  <text x="740" y="1254" text-anchor="middle" font-size="10.5" fill="#0a6832" font-weight="600">+ Optional Comment</text>
+
+  <!-- UC-C6a: Add Exit Comment (extend) -->
+  <ellipse cx="880" cy="1306" rx="100" ry="22" fill="#ccf0da" stroke="#0a6832" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="880" y="1303" text-anchor="middle" font-size="9.5" fill="#0a6832">UC-C6a: Add Exit</text>
+  <text x="880" y="1315" text-anchor="middle" font-size="9.5" fill="#0a6832">Comment (Optional)</text>
+
+  <!-- Response Teams associations -->
+  <line x1="1320" y1="1130" x2="994" y2="1106" stroke="#0a6832" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="1138" x2="994" y2="1114" stroke="#0a6832" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="1146" x2="994" y2="1174" stroke="#0a6832" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="1154" x2="994" y2="1182" stroke="#0a6832" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="1162" x2="994" y2="1246" stroke="#0a6832" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="1170" x2="994" y2="1252" stroke="#0a6832" stroke-width="1.5" marker-end="url(#asc)"/>
+
+  <!-- extend C6→C6a -->
+  <line x1="856" y1="1244" x2="876" y2="1284" stroke="#7a4200" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#ext)"/>
+  <text x="876" y="1268" font-size="8" fill="#7a4200" font-family="IBM Plex Mono">«extend»</text>
+
+  <!-- Sub-type note for Response Teams -->
+  <rect x="990" y="1070" width="158" height="100" rx="4" fill="#e6f8ee" stroke="#0a6832" stroke-width="1.2"/>
+  <text x="1000" y="1088" font-size="9" fill="#0a6832" font-weight="700" font-family="IBM Plex Mono">Sub-types:</text>
+  <text x="1000" y="1103" font-size="9" fill="#3a3730">• BFP Personnel</text>
+  <text x="1000" y="1117" font-size="9" fill="#3a3730">• Fire Volunteer</text>
+  <text x="1000" y="1131" font-size="9" fill="#3a3730">• Barangay Personnel</text>
+  <text x="1000" y="1145" font-size="9" fill="#3a3730">• Medical / Police</text>
+  <text x="1000" y="1159" font-size="8" fill="#857f74">(shared mobile features)</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION D — ALARM LEVEL & FIRE CODES
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="1348" width="892" height="28" rx="2" fill="#7a4200" opacity="0.88"/>
+  <text x="710" y="1367" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">D — ALARM LEVEL &amp; FIRE CODES (BFP + FV ONLY)</text>
+
+  <!-- UC-D1: Send Fire Code Need Backup -->
+  <ellipse cx="440" cy="1428" rx="118" ry="26" fill="#fdf4e8" stroke="#7a4200" stroke-width="2"/>
+  <text x="440" y="1425" text-anchor="middle" font-size="10.5" fill="#7a4200" font-weight="600">UC-D1: Send Fire Code</text>
+  <text x="440" y="1438" text-anchor="middle" font-size="10.5" fill="#7a4200" font-weight="600">(Need Backup)</text>
+
+  <!-- UC-D2: Send Fire Code Need Water -->
+  <ellipse cx="740" cy="1428" rx="118" ry="26" fill="#fdf4e8" stroke="#7a4200" stroke-width="2"/>
+  <text x="740" y="1425" text-anchor="middle" font-size="10.5" fill="#7a4200" font-weight="600">UC-D2: Send Fire Code</text>
+  <text x="740" y="1438" text-anchor="middle" font-size="10.5" fill="#7a4200" font-weight="600">(Need Water)</text>
+
+  <!-- UC-D3: REQUEST Alarm Raise (FV only) -->
+  <ellipse cx="440" cy="1510" rx="120" ry="28" fill="#fdf4e8" stroke="#446200" stroke-width="2"/>
+  <text x="440" y="1504" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="700">UC-D3: REQUEST Alarm</text>
+  <text x="440" y="1517" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="700">Level Raise (FV Only)</text>
+  <text x="440" y="1530" text-anchor="middle" font-size="8.5" fill="#857f74">Cannot execute — BFP must act</text>
+
+  <!-- UC-D4: EXECUTE Alarm Raise (BFP only) -->
+  <ellipse cx="740" cy="1510" rx="122" ry="28" fill="#fdf4e8" stroke="#7a4200" stroke-width="2.5"/>
+  <text x="740" y="1504" text-anchor="middle" font-size="10.5" fill="#7a4200" font-weight="700">UC-D4: EXECUTE Alarm</text>
+  <text x="740" y="1517" text-anchor="middle" font-size="10.5" fill="#7a4200" font-weight="700">Level Raise (BFP Only)</text>
+  <text x="740" y="1530" text-anchor="middle" font-size="8.5" fill="#7a4200">1st (4 trucks) → 2nd (8) → General</text>
+
+  <!-- UC-D4a: Set alarm level include -->
+  <ellipse cx="880" cy="1580" rx="106" ry="24" fill="#fce8d0" stroke="#7a4200" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="880" y="1577" text-anchor="middle" font-size="9.5" fill="#7a4200">UC-D4a: Set 1st / 2nd</text>
+  <text x="880" y="1590" text-anchor="middle" font-size="9.5" fill="#7a4200">/ General Alarm Level</text>
+
+  <!-- FV associations -->
+  <line x1="100" y1="862" x2="320" y2="1436" stroke="#446200" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="100" y1="872" x2="320" y2="1520" stroke="#446200" stroke-width="1.5" marker-end="url(#asc)"/>
+  <!-- BFP associations -->
+  <line x1="100" y1="1390" x2="322" y2="1432" stroke="#7a4200" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="100" y1="1400" x2="322" y2="1438" stroke="#7a4200" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="100" y1="1412" x2="618" y2="1516" stroke="#7a4200" stroke-width="1.5" marker-end="url(#asc)"/>
+  <!-- include D4→D4a -->
+  <line x1="862" y1="1510" x2="878" y2="1556" stroke="#1240a0" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="882" y="1538" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION E — SUB-ADMIN OPERATIONS
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="1620" width="892" height="28" rx="2" fill="#562080" opacity="0.88"/>
+  <text x="710" y="1639" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">E — SUB-ADMIN OPERATIONS (BRGY · MEDIC · POLICE · MOBILE)</text>
+
+  <!-- UC-E1: View Department Dashboard -->
+  <ellipse cx="450" cy="1700" rx="118" ry="26" fill="#f4ecfc" stroke="#562080" stroke-width="2"/>
+  <text x="450" y="1697" text-anchor="middle" font-size="10.5" fill="#562080" font-weight="600">UC-E1: View Department</text>
+  <text x="450" y="1710" text-anchor="middle" font-size="10.5" fill="#562080" font-weight="600">Dashboard</text>
+
+  <!-- UC-E2: Manage Personnel Accounts -->
+  <ellipse cx="740" cy="1700" rx="118" ry="26" fill="#f4ecfc" stroke="#562080" stroke-width="2"/>
+  <text x="740" y="1697" text-anchor="middle" font-size="10.5" fill="#562080" font-weight="600">UC-E2: Manage Dept.</text>
+  <text x="740" y="1710" text-anchor="middle" font-size="10.5" fill="#562080" font-weight="600">Personnel Accounts</text>
+
+  <!-- UC-E3: Request Map Updates -->
+  <ellipse cx="450" cy="1774" rx="118" ry="26" fill="#f4ecfc" stroke="#562080" stroke-width="2"/>
+  <text x="450" y="1771" text-anchor="middle" font-size="10.5" fill="#562080" font-weight="600">UC-E3: Request Map</text>
+  <text x="450" y="1784" text-anchor="middle" font-size="10.5" fill="#562080" font-weight="600">Layer Updates</text>
+
+  <!-- UC-E3a: Admin Approval (include) -->
+  <ellipse cx="740" cy="1774" rx="120" ry="26" fill="#e8dcf8" stroke="#562080" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="740" y="1771" text-anchor="middle" font-size="9.5" fill="#562080">UC-E3a: Admin / Super Admin</text>
+  <text x="740" y="1784" text-anchor="middle" font-size="9.5" fill="#562080">Approves Map Update</text>
+
+  <!-- Sub-Admin Brgy/Medic/Police associations -->
+  <line x1="100" y1="1896" x2="332" y2="1706" stroke="#562080" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="100" y1="1908" x2="622" y2="1704" stroke="#562080" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="100" y1="1918" x2="332" y2="1776" stroke="#562080" stroke-width="1.5" marker-end="url(#asc)"/>
+  <!-- include E3→E3a -->
+  <line x1="568" y1="1774" x2="620" y2="1774" stroke="#1240a0" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="592" y="1766" text-anchor="middle" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION F — EQUIPMENT & AFFILIATE MANAGEMENT
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="1828" width="892" height="28" rx="2" fill="#446200" opacity="0.88"/>
+  <text x="710" y="1847" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">F — EQUIPMENT &amp; AFFILIATE ORGANIZATION (v5+ · CHG#4)</text>
+
+  <!-- UC-F1: Manage Equipment -->
+  <ellipse cx="450" cy="1908" rx="118" ry="26" fill="#eef6dc" stroke="#446200" stroke-width="2"/>
+  <text x="450" y="1905" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="600">UC-F1: Manage Equipment</text>
+  <text x="450" y="1918" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="600">(Trucks · Tools · PPE)</text>
+
+  <!-- UC-F2: Manage Affiliate Organization -->
+  <ellipse cx="760" cy="1908" rx="122" ry="26" fill="#eef6dc" stroke="#446200" stroke-width="2"/>
+  <text x="760" y="1905" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="600">UC-F2: Manage Affiliate</text>
+  <text x="760" y="1918" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="600">Organization Registry</text>
+
+  <!-- UC-F2a: Accept Affiliate Request (include) -->
+  <ellipse cx="880" cy="1976" rx="110" ry="24" fill="#d8f0b8" stroke="#446200" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="880" y="1973" text-anchor="middle" font-size="9.5" fill="#446200">UC-F2a: Accept Affiliate</text>
+  <text x="880" y="1986" text-anchor="middle" font-size="9.5" fill="#446200">Request (Approval Flow)</text>
+
+  <!-- UC-F3: Apply Hydrant Ground-Truth Update (CHG#4) -->
+  <ellipse cx="450" cy="1982" rx="122" ry="26" fill="#eef6dc" stroke="#446200" stroke-width="2"/>
+  <text x="450" y="1977" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="600">UC-F3: Apply Hydrant</text>
+  <text x="450" y="1990" text-anchor="middle" font-size="10.5" fill="#446200" font-weight="600">Ground-Truth Update (CHG#4)</text>
+  <text x="450" y="2002" text-anchor="middle" font-size="8.5" fill="#857f74">FV affiliates only · Logged · Overrides BFP sync</text>
+
+  <!-- Super Admin + FV Sub-Admin associations -->
+  <line x1="1320" y1="2008" x2="998" y2="1912" stroke="#9a1858" stroke-width="1.4" marker-end="url(#asc)"/>
+  <line x1="1320" y1="2016" x2="998" y2="1918" stroke="#9a1858" stroke-width="1.4" marker-end="url(#asc)"/>
+  <line x1="100" y1="876" x2="328" y2="1910" stroke="#446200" stroke-width="1.4" stroke-dasharray="3,2" marker-end="url(#asc)"/>
+  <line x1="100" y1="886" x2="328" y2="1980" stroke="#446200" stroke-width="1.4" stroke-dasharray="3,2" marker-end="url(#asc)"/>
+  <!-- include F2→F2a -->
+  <line x1="882" y1="1908" x2="882" y2="1952" stroke="#1240a0" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#inc)"/>
+  <text x="900" y="1934" font-size="8" fill="#1240a0" font-family="IBM Plex Mono">«include»</text>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION G — AUDIT LOG & SUPER ADMIN CONTROL
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="2032" width="892" height="28" rx="2" fill="#9a1858" opacity="0.88"/>
+  <text x="710" y="2051" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">G — AUDIT LOG &amp; SUPER ADMIN FULL CONTROL (v6 EXPANDED)</text>
+
+  <!-- UC-G1: View Incident Audit Log (7 timestamps + triangulation) -->
+  <ellipse cx="450" cy="2106" rx="122" ry="28" fill="#fceef4" stroke="#9a1858" stroke-width="2"/>
+  <text x="450" y="2100" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="600">UC-G1: View Incident Audit Log</text>
+  <text x="450" y="2113" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="600">(7 Timestamps + Tri Fields)</text>
+
+  <!-- UC-G2: Full System Configuration -->
+  <ellipse cx="760" cy="2106" rx="122" ry="28" fill="#fceef4" stroke="#9a1858" stroke-width="2.5"/>
+  <text x="760" y="2100" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="700">UC-G2: Full System</text>
+  <text x="760" y="2113" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="700">Configuration (Super Admin)</text>
+
+  <!-- UC-G3: Manage All User Accounts -->
+  <ellipse cx="450" cy="2182" rx="122" ry="26" fill="#fceef4" stroke="#9a1858" stroke-width="2"/>
+  <text x="450" y="2179" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="600">UC-G3: Manage All</text>
+  <text x="450" y="2192" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="600">User Accounts (All Roles)</text>
+
+  <!-- UC-G4: View Analytics -->
+  <ellipse cx="760" cy="2182" rx="122" ry="26" fill="#fceef4" stroke="#9a1858" stroke-width="2"/>
+  <text x="760" y="2179" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="600">UC-G4: View System</text>
+  <text x="760" y="2192" text-anchor="middle" font-size="10.5" fill="#9a1858" font-weight="600">Analytics &amp; Full Reports</text>
+
+  <!-- Super Admin right associations -->
+  <line x1="1320" y1="2040" x2="996" y2="2108" stroke="#9a1858" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="2048" x2="996" y2="2116" stroke="#9a1858" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="2056" x2="996" y2="2182" stroke="#9a1858" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="2064" x2="996" y2="2190" stroke="#9a1858" stroke-width="1.5" marker-end="url(#asc)"/>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION H — AI SUMMARIZATION (Claude API)
+  ══════════════════════════════════════════════ -->
+  <rect x="264" y="2236" width="892" height="28" rx="2" fill="#096868" opacity="0.88"/>
+  <text x="710" y="2255" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="IBM Plex Mono" letter-spacing="2">H — AI SUMMARIZATION (CLAUDE API · HAIKU · POST-TRIANGULATION · CHG#2)</text>
+
+  <!-- UC-H1: Generate Individual Incident Summary -->
+  <ellipse cx="450" cy="2314" rx="128" ry="28" fill="#e4f8f8" stroke="#096868" stroke-width="2"/>
+  <text x="450" y="2308" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">UC-H1: Generate Individual</text>
+  <text x="450" y="2321" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">Incident Summary (Haiku)</text>
+
+  <!-- UC-H2: Generate Clustered Area Summary -->
+  <ellipse cx="760" cy="2314" rx="128" ry="28" fill="#e4f8f8" stroke="#096868" stroke-width="2"/>
+  <text x="760" y="2308" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">UC-H2: Generate Clustered</text>
+  <text x="760" y="2321" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">Area Summary (Post-Tri)</text>
+
+  <!-- UC-H3: Generate BFP Fire-Out Report -->
+  <ellipse cx="450" cy="2400" rx="128" ry="28" fill="#e4f8f8" stroke="#096868" stroke-width="2"/>
+  <text x="450" y="2394" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">UC-H3: Generate Structured</text>
+  <text x="450" y="2407" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">BFP Fire-Out Report (AI)</text>
+  <text x="450" y="2419" text-anchor="middle" font-size="8" fill="#857f74">Triggered on Resolved · post-triangulated data</text>
+
+  <!-- UC-H4: Reload / Regenerate Group Summary (extend) -->
+  <ellipse cx="760" cy="2400" rx="118" ry="26" fill="#c8f0f0" stroke="#096868" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="760" y="2397" text-anchor="middle" font-size="10" fill="#096868">UC-H4: Reload Group</text>
+  <text x="760" y="2410" text-anchor="middle" font-size="10" fill="#096868">Summary (Regenerate)</text>
+
+  <!-- UC-H5: Pin Migration + 'Location Refined' Label -->
+  <ellipse cx="605" cy="2484" rx="136" ry="28" fill="#e4f8f8" stroke="#096868" stroke-width="2"/>
+  <text x="605" y="2478" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">UC-H5: Display Pin Migration</text>
+  <text x="605" y="2491" text-anchor="middle" font-size="10.5" fill="#096868" font-weight="600">+ "Location Refined" Label</text>
+  <text x="605" y="2503" text-anchor="middle" font-size="8" fill="#857f74">0.5s animation · Triggered when triangulation refines coords</text>
+
+  <!-- extend H2→H4 -->
+  <line x1="760" y1="2342" x2="760" y2="2374" stroke="#7a4200" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#ext)"/>
+  <text x="778" y="2360" font-size="8" fill="#7a4200" font-family="IBM Plex Mono">«extend»</text>
+
+  <!-- Claude API right associations -->
+  <line x1="1320" y1="2524" x2="994" y2="2318" stroke="#096868" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="2532" x2="994" y2="2326" stroke="#096868" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="2540" x2="994" y2="2402" stroke="#096868" stroke-width="1.5" marker-end="url(#asc)"/>
+  <line x1="1320" y1="2548" x2="994" y2="2490" stroke="#096868" stroke-width="1.5" marker-end="url(#asc)"/>
+
+  <!-- Admin also triggers H1, H2 (indirect through B2) -->
+  <line x1="100" y1="900" x2="322" y2="2308" stroke="#1240a0" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#asc)"/>
+
+</svg>
+
+    </div>
+  </div>
+
+  <!-- ── RELATIONSHIP TABLE ── -->
+  <div class="section-label">Use Case Relationship Reference — v6.0</div>
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:34px;">
+    <table class="rel-table">
+      <thead><tr><th>UC ID</th><th>Use Case Name</th><th>Primary Actor(s)</th><th>Relationship</th><th>Description</th></tr></thead>
+      <tbody>
+
+        <tr><td colspan="5" style="background:#fff2ee;font-family:IBM Plex Mono;font-size:0.68rem;color:#b52e0e;padding:8px 14px;font-weight:600;letter-spacing:1px;">A — INCIDENT REPORTING (GENERAL USER)</td></tr>
+        <tr><td><span class="uc-id">UC-A1</span></td><td>Submit Fire Incident Report</td><td>General User</td><td><span class="rb rb-ass">association</span></td><td>Citizen submits report via mobile. SOS press-and-hold triggers Pre-Alert pin (CHG#1) before full report is finalized. Cannot cancel after submission. Warning shown before SOS.</td></tr>
+        <tr><td><span class="uc-id">UC-A2</span></td><td>Auto-Capture GPS Location</td><td>System</td><td><span class="rb rb-inc">«include»</span> of A1</td><td>GPS coordinates automatically captured at submission. Always triggered with A1.</td></tr>
+        <tr><td><span class="uc-id">UC-A3</span></td><td>Upload Incident Photo (Camera-Only)</td><td>General User</td><td><span class="rb rb-inc">«include»</span> of A1</td><td>Mandatory camera photo — no gallery upload. Always triggered with A1.</td></tr>
+        <tr><td><span class="uc-id">UC-A4</span></td><td>Trigger SOS Pre-Alert Pin (CHG#1)</td><td>System</td><td><span class="rb rb-ext">«extend»</span> of A1</td><td>Press-and-hold SOS (2s) immediately places pulsing pin on FV Sub-Admin dashboard. Pre-Alert auto-removes after 2 minutes if no full report follows. Invisible to General User.</td></tr>
+        <tr><td><span class="uc-id">UC-A4b</span></td><td>Auto-Capture Compass Bearing (CHG#3)</td><td>System</td><td><span class="rb rb-inc">«include»</span> of A1</td><td>Magnetometer bearing silently attached at photo capture moment. Invisible to citizen. Feeds the Triangulation Pipeline (Section T), not Claude directly. If magnetometer unavailable: report flagged "no bearing — location only."</td></tr>
+        <tr><td><span class="uc-id">UC-A5</span></td><td>Track Responding Team Live Location</td><td>General User</td><td><span class="rb rb-ass">association</span></td><td>Original reporter sees live location of the responding team after dispatch. Not visible to other citizens.</td></tr>
+        <tr><td><span class="uc-id">UC-A6</span></td><td>Receive Status Notifications (FCM)</td><td>General User</td><td><span class="rb rb-ass">association</span></td><td>Push notifications at: Verified, Dispatched, Ongoing, Resolved, Rejected. NOT notified of Pre-Alert.</td></tr>
+
+        <tr><td colspan="5" style="background:#fff4ee;font-family:IBM Plex Mono;font-size:0.68rem;color:#c44a00;padding:8px 14px;font-weight:600;letter-spacing:1px;">T — TRIANGULATION PIPELINE (FastAPI Backend · v6 NEW · CHG#3)</td></tr>
+        <tr><td><span class="uc-id">UC-T1</span></td><td>Form Incident Cluster</td><td>System (FastAPI)</td><td><span class="rb rb-ass">association</span></td><td>Groups incoming reports into same incident when: GPS within 500m AND submitted within 5-minute window. Reports not meeting both conditions become separate incidents.</td></tr>
+        <tr><td><span class="uc-id">UC-T2</span></td><td>Compute Ray-Ray Intersection (2 reports)</td><td>System (FastAPI)</td><td><span class="rb rb-inc">«include»</span> of T1</td><td>When exactly two reports have valid bearings: computes single ray-ray intersection within 500m cap. Result = fire_estimated_lat, fire_estimated_lng. If rays do not intersect within cap: treated as separate incidents.</td></tr>
+        <tr><td><span class="uc-id">UC-T3</span></td><td>Compute Centroid (3+ reports)</td><td>System (FastAPI)</td><td><span class="rb rb-ext">«extend»</span> of T1</td><td>When three or more reports with valid bearings: computes all pairwise intersections, filters out those beyond 500m cap of either ray, averages remaining intersections into centroid = estimated fire location.</td></tr>
+        <tr><td><span class="uc-id">UC-T4</span></td><td>Generate Confidence Badge (H/M/L)</td><td>System (FastAPI)</td><td><span class="rb rb-inc">«include»</span> of T1</td><td>Derives triangulation_confidence (0.0–1.0) from spread of intersection points. Displayed as High / Medium / Low badge on incident pins in web dashboard and mobile maps. Dispatchers use at own discretion — not folded into AI priority.</td></tr>
+
+        <tr><td colspan="5" style="background:#eef2fc;font-family:IBM Plex Mono;font-size:0.68rem;color:#1240a0;padding:8px 14px;font-weight:600;letter-spacing:1px;">B — ADMIN OPERATIONS (BARANGAY 76 · WEB)</td></tr>
+        <tr><td><span class="uc-id">UC-B1</span></td><td>View GIS Dashboard (Triangulation Badges)</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Live MapBox dashboard with active incidents (pins show triangulated coordinates when available), triangulation-confidence badges (H/M/L), responder live icons, unit status, alert animations.</td></tr>
+        <tr><td><span class="uc-id">UC-B1a</span></td><td>View Map Layers</td><td>System</td><td><span class="rb rb-inc">«include»</span> of B1</td><td>Map always includes: Fire Hydrants (with ground-truth status), Risk Zones, Evacuation Sites, Bodies of Water, Underground Cisterns, Pre-Alert pulsing pin (transient).</td></tr>
+        <tr><td><span class="uc-id">UC-B2</span></td><td>View AI-Generated Incident Summary</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Click single pin → individual AI summary (Haiku). Click cluster pin → combined area summary using post-triangulated data. Confidence badge shown alongside.</td></tr>
+        <tr><td><span class="uc-id">UC-B3</span></td><td>Verify Incident Report</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Marks Pending report as Verified → triggers FCM push to all Response Teams.</td></tr>
+        <tr><td><span class="uc-id">UC-B4</span></td><td>Reject Incident Report</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Marks fake/prank as Rejected (soft-delete — retained in D1 for analytics). General User may be notified.</td></tr>
+        <tr><td><span class="uc-id">UC-B5</span></td><td>Dispatch Response Team (Manual)</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Admin manually assigns specific teams to a verified incident. Complements Response Team self-select.</td></tr>
+        <tr><td><span class="uc-id">UC-B6</span></td><td>Resolve Incident (Fire-Out Declaration)</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Admin declares fire-out and marks Resolved. Notifies all relevant roles. Always triggers UC-B6a.</td></tr>
+        <tr><td><span class="uc-id">UC-B6a</span></td><td>Generate BFP Fire-Out Report (AI)</td><td>System + Claude API</td><td><span class="rb rb-inc">«include»</span> of B6</td><td>AI generates structured fire-out incident report for BFP upon resolution using post-triangulated cluster data. Always triggered with B6.</td></tr>
+        <tr><td><span class="uc-id">UC-B7</span></td><td>Approve Map Layer Updates</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Admin approves evacuation site and other map update requests submitted by Sub-Admins before they go live.</td></tr>
+        <tr><td><span class="uc-id">UC-B8</span></td><td>Monitor Responder Live Location</td><td>Admin Barangay 76</td><td><span class="rb rb-ass">association</span></td><td>Admin sees live icons of responding teams on web dashboard. No route lines — icons only.</td></tr>
+
+        <tr><td colspan="5" style="background:#e6f8ee;font-family:IBM Plex Mono;font-size:0.68rem;color:#0a6832;padding:8px 14px;font-weight:600;letter-spacing:1px;">C — RESPONSE TEAM OPERATIONS (ALL AGENCIES · MOBILE)</td></tr>
+        <tr><td><span class="uc-id">UC-C1</span></td><td>Receive Incident Notification (FCM)</td><td>Response Teams</td><td><span class="rb rb-ass">association</span></td><td>All Response Team members receive push + in-app notification when Admin/FV Sub-Admin verifies an incident.</td></tr>
+        <tr><td><span class="uc-id">UC-C2</span></td><td>Self-Select Incident to Respond</td><td>Response Teams</td><td><span class="rb rb-ass">association</span></td><td>Responders freely choose which active incident to respond to from the incident list — consistent with real-world volunteer operations. Incident pin shows triangulated location when available.</td></tr>
+        <tr><td><span class="uc-id">UC-C3</span></td><td>View Route Suggestion (MapBox)</td><td>Response Teams</td><td><span class="rb rb-ass">association</span></td><td>MapBox route displayed from responder's current GPS to the incident's triangulated fire_estimated_lat/lng (or reporter GPS if single-report fallback).</td></tr>
+        <tr><td><span class="uc-id">UC-C4</span></td><td>View Hydrant, Water &amp; Evacuation Map</td><td>Response Teams</td><td><span class="rb rb-ass">association</span></td><td>Responders view hydrant locations (with ground-truth status), bodies of water, underground cisterns, and evacuation sites on their mobile map.</td></tr>
+        <tr><td><span class="uc-id">UC-C5</span></td><td>Tap Arrived Button (Triggers Ongoing)</td><td>Response Teams</td><td><span class="rb rb-ass">association</span></td><td>Team taps Arrived at scene → triggers Ongoing lifecycle status; in-app alert sent to Sub-Admin. Involvement count updated.</td></tr>
+        <tr><td><span class="uc-id">UC-C6</span></td><td>Tap Exit Button + Optional Comment</td><td>Response Teams</td><td><span class="rb rb-ass">association</span></td><td>Team taps Exit when leaving scene. Sub-Admin receives in-app alert. Comment is optional (UC-C6a).</td></tr>
+        <tr><td><span class="uc-id">UC-C6a</span></td><td>Add Exit Comment (Optional)</td><td>Response Teams</td><td><span class="rb rb-ext">«extend»</span> of C6</td><td>Optional — only if responder chooses to add a comment on exit. Logged in Audit Log.</td></tr>
+
+        <tr><td colspan="5" style="background:#fdf4e8;font-family:IBM Plex Mono;font-size:0.68rem;color:#7a4200;padding:8px 14px;font-weight:600;letter-spacing:1px;">D — ALARM LEVEL &amp; FIRE CODES (BFP + FV ONLY)</td></tr>
+        <tr><td><span class="uc-id">UC-D1</span></td><td>Send Fire Code: Need Backup</td><td>FV/BFP Sub-Admin &amp; Teams</td><td><span class="rb rb-ass">association</span></td><td>In-app fire code signaling need for additional responders. Logged in Audit Log per incident. Visible only to FV and BFP roles.</td></tr>
+        <tr><td><span class="uc-id">UC-D2</span></td><td>Send Fire Code: Need Water</td><td>FV/BFP Sub-Admin &amp; Teams</td><td><span class="rb rb-ass">association</span></td><td>In-app fire code signaling need for water at scene. Logged in Audit Log. Visible only to FV and BFP roles.</td></tr>
+        <tr><td><span class="uc-id">UC-D3</span></td><td>REQUEST Alarm Level Raise (FV Only)</td><td>FV Sub-Admin + FV/BFP Teams</td><td><span class="rb rb-ass">association</span></td><td>FV Sub-Admin or Response Team sends request-to-raise-alarm via in-app Fire Codes. CANNOT execute — only BFP Sub-Admin can act on the request. RBAC hard-coded in system.</td></tr>
+        <tr><td><span class="uc-id">UC-D4</span></td><td>EXECUTE Alarm Level Raise (BFP Only)</td><td>BFP Sub-Admin</td><td><span class="rb rb-ass">association</span></td><td>BFP Sub-Admin is the ONLY role authorized to execute alarm escalation. Receives request via in-app notification. Sets First Alarm (4 trucks), Second Alarm (8 trucks), or General Alarm (all units).</td></tr>
+        <tr><td><span class="uc-id">UC-D4a</span></td><td>Set Alarm Level (1st / 2nd / General)</td><td>System</td><td><span class="rb rb-inc">«include»</span> of D4</td><td>Always triggered when D4 executes: sets one of three official BFP alarm levels. Updates incident record in D1.</td></tr>
+
+        <tr><td colspan="5" style="background:#f4ecfc;font-family:IBM Plex Mono;font-size:0.68rem;color:#562080;padding:8px 14px;font-weight:600;letter-spacing:1px;">E — SUB-ADMIN OPERATIONS (BRGY · MEDIC · POLICE · MOBILE)</td></tr>
+        <tr><td><span class="uc-id">UC-E1</span></td><td>View Department Dashboard</td><td>Sub-Admins (Brgy/Medic/Police)</td><td><span class="rb rb-ass">association</span></td><td>Each Sub-Admin views their department's mobile dashboard: active incidents, alert animations, hydrant data (with ground-truth status), personnel sign-in status.</td></tr>
+        <tr><td><span class="uc-id">UC-E2</span></td><td>Manage Department Personnel Accounts</td><td>Sub-Admins (Brgy/Medic/Police)</td><td><span class="rb rb-ass">association</span></td><td>Sub-Admins create, update, and delete accounts for their own department's personnel only (scoped by organization).</td></tr>
+        <tr><td><span class="uc-id">UC-E3</span></td><td>Request Map Layer Updates</td><td>Sub-Admin (Barangay)</td><td><span class="rb rb-ass">association</span></td><td>Barangay Sub-Admin requests updates to Evacuation Sites, Hydrants, Bodies of Water, or Cisterns. Must be approved by Admin or Super Admin before publishing (UC-E3a).</td></tr>
+        <tr><td><span class="uc-id">UC-E3a</span></td><td>Admin / Super Admin Approves Map Update</td><td>Admin + Super Admin</td><td><span class="rb rb-inc">«include»</span> of E3</td><td>Always required — map update requests do not go live without approval from Admin (Barangay 76) or Super Admin (M2STZ).</td></tr>
+
+        <tr><td colspan="5" style="background:#eef6dc;font-family:IBM Plex Mono;font-size:0.68rem;color:#446200;padding:8px 14px;font-weight:600;letter-spacing:1px;">F — EQUIPMENT &amp; AFFILIATE ORGANIZATION (v5+ · CHG#4)</td></tr>
+        <tr><td><span class="uc-id">UC-F1</span></td><td>Manage Equipment Registry</td><td>Super Admin + Sub-Admins (scoped)</td><td><span class="rb rb-ass">association</span></td><td>Super Admin manages all equipment categories. Each Sub-Admin manages only their own category. Equipment linked to owning Affiliate Organization.</td></tr>
+        <tr><td><span class="uc-id">UC-F2</span></td><td>Manage Affiliate Organization Registry</td><td>Super Admin + Admin</td><td><span class="rb rb-ass">association</span></td><td>Registry of all partner organizations (Hercules, Brgy76 FV, Fil-Chi, plus future affiliates) with roster, equipment, and named fire trucks.</td></tr>
+        <tr><td><span class="uc-id">UC-F2a</span></td><td>Accept Affiliate Request</td><td>Admin / Super Admin</td><td><span class="rb rb-inc">«include»</span> of F2</td><td>New organizations apply via request. Admin or Super Admin must approve before organization is active. Approval also grants hydrant ground-truth update authority (CHG#4).</td></tr>
+        <tr><td><span class="uc-id">UC-F3</span></td><td>Apply Hydrant Ground-Truth Update (CHG#4)</td><td>FV Sub-Admin (accepted affiliates)</td><td><span class="rb rb-ass">association</span></td><td>Any accepted fire-volunteer affiliate (Hercules, Brgy76 FV, Fil-Chi, future affiliates) can mark a hydrant as functional or non-functional from the field. Override persists until next BFP auto-sync. Every update is logged in Audit Log (actor, hydrant ID, prior/new status, timestamp).</td></tr>
+
+        <tr><td colspan="5" style="background:#fceef4;font-family:IBM Plex Mono;font-size:0.68rem;color:#9a1858;padding:8px 14px;font-weight:600;letter-spacing:1px;">G — AUDIT LOG &amp; SUPER ADMIN FULL CONTROL (v6 EXPANDED)</td></tr>
+        <tr><td><span class="uc-id">UC-G1</span></td><td>View Incident Audit Log (7 Timestamps + Tri Fields)</td><td>Admin + Super Admin + Sub-Admins</td><td><span class="rb rb-ass">association</span></td><td>Per-incident structured log: Pre-Alert, Submitted, Verified, Responding, Responded (Time In), Time Out, Fire Out timestamps PLUS triangulation_method, triangulation_confidence, fire_estimated_lat/lng, vehicle names, org names, hydrant ground-truth update events. Visibility scoped by role.</td></tr>
+        <tr><td><span class="uc-id">UC-G2</span></td><td>Full System Configuration (Super Admin)</td><td>Super Admin (M2STZ)</td><td><span class="rb rb-ass">association</span></td><td>Super Admin has full system control: all user accounts across all roles, all equipment categories, all affiliate organizations, system-wide settings, all audit logs including triangulation data.</td></tr>
+        <tr><td><span class="uc-id">UC-G3</span></td><td>Manage All User Accounts (All Roles)</td><td>Super Admin (M2STZ)</td><td><span class="rb rb-ass">association</span></td><td>Super Admin can create, update, and delete accounts for any role (Sub-Admin, Response Team, General User) across all organizations.</td></tr>
+        <tr><td><span class="uc-id">UC-G4</span></td><td>View System Analytics &amp; Full Reports</td><td>Super Admin (M2STZ)</td><td><span class="rb rb-ass">association</span></td><td>Full analytics: all incident records with triangulation data, system usage logs, all audit trails, TAM-relevant usage metrics.</td></tr>
+
+        <tr><td colspan="5" style="background:#e4f8f8;font-family:IBM Plex Mono;font-size:0.68rem;color:#096868;padding:8px 14px;font-weight:600;letter-spacing:1px;">H — AI SUMMARIZATION (CLAUDE API · HAIKU · POST-TRIANGULATION · CHG#2)</td></tr>
+        <tr><td><span class="uc-id">UC-H1</span></td><td>Generate Individual Incident Summary (Haiku)</td><td>Admin + Claude API</td><td><span class="rb rb-ass">association</span></td><td>Admin clicks single incident pin; system sends post-triangulated data (fire_estimated_lat/lng, photo, description) to Claude Haiku; AI returns summary (paragraph + bullets), keywords, priority suggestion (Low/Med/High).</td></tr>
+        <tr><td><span class="uc-id">UC-H2</span></td><td>Generate Clustered Area Summary (Post-Tri)</td><td>Admin + Claude API</td><td><span class="rb rb-ass">association</span></td><td>Admin clicks cluster pin; all reports in the cluster (with triangulated centroid coordinates) sent to Claude Haiku; group area summary generated. Claude never receives raw bearings — only pre-computed coordinates.</td></tr>
+        <tr><td><span class="uc-id">UC-H3</span></td><td>Generate Structured BFP Fire-Out Report</td><td>System + Claude API</td><td><span class="rb rb-ass">association</span></td><td>Upon incident resolution, Claude Haiku generates a structured fire-out report in BFP format from post-triangulated cluster data. Triggered by UC-B6a. Sent through the two-way BFP mobile connection.</td></tr>
+        <tr><td><span class="uc-id">UC-H4</span></td><td>Reload Group Summary (Regenerate)</td><td>Admin</td><td><span class="rb rb-ext">«extend»</span> of H2</td><td>Optional — Admin can reload/regenerate the cluster summary as new reports are added and triangulation refines the estimated fire location. Not triggered automatically.</td></tr>
+        <tr><td><span class="uc-id">UC-H5</span></td><td>Display Pin Migration + "Location Refined" Label</td><td>System</td><td><span class="rb rb-ass">association</span></td><td>When a second valid bearing report upgrades a single-report incident to triangulated: the MapBox pin smoothly animates (0.5s ease) from reporter GPS to fire_estimated_lat/lng, accompanied by a brief "location refined" label on dashboards and a confidence badge update.</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── EXPLANATION CARDS ── -->
+  <div class="section-label">Use Case Diagram — Technical Explanation</div>
+  <div class="expl-grid">
+    <div class="expl-card">
+      <h4><div class="nbadge" style="background:#b52e0e">01</div> v6.0 Key Changes</h4>
+      <p>The biggest v6 addition is <strong>Section T — Triangulation Pipeline</strong>: 4 new use cases (UC-T1 to UC-T4) representing the FastAPI backend process that converts GPS + bearing into estimated fire coordinates before AI is called. UC-A4b is now an «include» of A1 (bearing is always captured, not just sometimes). UC-H3 updated: Claude receives fire_estimated_lat/lng, never raw bearings. UC-F3 is new for CHG#4 hydrant ground-truth authority.</p>
+    </div>
+    <div class="expl-card">
+      <h4><div class="nbadge" style="background:#c44a00">02</div> Section T — Why a Separate Section?</h4>
+      <ul>
+        <li>Triangulation is a <strong>deterministic backend computation</strong> (FastAPI geometry) — not AI, not user-driven</li>
+        <li>It is placed between Section A (citizen input) and Section B (admin operations) because it runs immediately after every report submission before anything else</li>
+        <li>UC-T1 is system-triggered; it has no actor association — the «system» label is shown in the diagram</li>
+        <li>UC-T3 «extends» T1 because centroid computation only happens with 3+ valid bearing reports</li>
+        <li>UC-T4 «includes» T1 because a confidence badge is always generated regardless of method</li>
+      </ul>
+    </div>
+    <div class="expl-card">
+      <h4><div class="nbadge" style="background:#1240a0">03</div> «include» vs «extend» in v6</h4>
+      <ul>
+        <li><strong>«include»</strong> = always triggered: A1→A2 (GPS always), A1→A3 (photo always), A1→A4b (bearing always), T1→T2 (ray intersection always for 2+ reports), T1→T4 (confidence badge always), B1→B1a (map layers always), B6→B6a (BFP report always on resolve), D4→D4a, E3→E3a, F2→F2a</li>
+        <li><strong>«extend»</strong> = conditional: A1→A4 (only on SOS hold), T1→T3 (only if 3+ reports), C6→C6a (only if comment added), H2→H4 (only if admin regenerates)</li>
+      </ul>
+    </div>
+    <div class="expl-card">
+      <h4><div class="nbadge" style="background:#7a4200">04</div> RBAC in Use Cases</h4>
+      <ul>
+        <li><strong>Alarm Authority:</strong> UC-D3 (FV requests) vs UC-D4 (BFP executes) are separate use cases — RBAC hard-coded</li>
+        <li><strong>Hydrant Ground-Truth:</strong> UC-F3 is only available after UC-F2a approval — acceptance grants the authority</li>
+        <li><strong>Equipment scoping:</strong> UC-F1 is shared but scoped — Super Admin sees all; each Sub-Admin type sees only their own category</li>
+        <li><strong>Map updates:</strong> UC-E3 + E3a enforces Barangay can only request, not publish directly</li>
+        <li><strong>AI access:</strong> Triggering AI summaries (UC-H1, H2) is limited to Admin roles and above</li>
+      </ul>
+    </div>
+    <div class="expl-card">
+      <h4><div class="nbadge" style="background:#096868">05</div> Claude API Role (v6)</h4>
+      <ul>
+        <li>Claude Haiku is used for testing AND deployment (CHG#2); Sonnet only if pilot quality is insufficient</li>
+        <li>Claude receives ONLY post-triangulated data: fire_estimated_lat/lng (never raw bearings), all photos and descriptions, involvement count, incident type</li>
+        <li>Claude outputs: ai_summary, ai_keywords, ai_priority (Low/Med/High), ai_last_updated, structured BFP fire-out report</li>
+        <li>triangulation_confidence is shown separately on dashboards — NOT folded into AI priority; dispatchers interpret it themselves</li>
+      </ul>
+    </div>
+    <div class="expl-card">
+      <h4><div class="nbadge" style="background:#0a6832">06</div> 8 Actors Summary (v6)</h4>
+      <ul>
+        <li><strong style="color:#b52e0e">General User</strong> — Submit, track, receive notifications (Mobile)</li>
+        <li><strong style="color:#1240a0">Admin Barangay 76</strong> — Full incident lifecycle, GIS web with confidence badges (Web)</li>
+        <li><strong style="color:#0a6832">Response Teams</strong> — Receive, navigate to triangulated coords, report status (Mobile)</li>
+        <li><strong style="color:#7a4200">Sub-Admin BFP</strong> — EXECUTE alarm, fire codes, BFP mobile dashboard (Mobile)</li>
+        <li><strong style="color:#446200">Sub-Admin FV</strong> — REQUEST alarm, verify, dispatch, hydrant updates (Mobile)</li>
+        <li><strong style="color:#562080">Sub-Admin Brgy/Medic/Police</strong> — Dept ops, map requests (Mobile)</li>
+        <li><strong style="color:#9a1858">Super Admin M2STZ</strong> — Full system control (Web)</li>
+        <li><strong style="color:#096868">Claude API</strong> — Post-triangulation AI (Haiku · Sonnet fallback)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Group M2STZ — National Teachers College · BSIT 3.2 · Capstone Project 1</span>
+  <span>Use Case Diagram · UML Standard · RepLiT v6.0 · May 03, 2026</span>
+  <span>Adviser: Mr. Carlito L. Cunanan, MIT</span>
+</div>
+
+</body>
+</html>
